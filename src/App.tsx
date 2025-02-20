@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import TaskList from "./pages/task/TaskList";
@@ -30,9 +30,6 @@ const App = () => {
           <Route path='/' element={<TaskList />} />
         </Routes>
       )}
-      <Routes>
-        <Route path='*' element={<Navigate replace to="/" />} />
-      </Routes>
     </Router>
   );
 };

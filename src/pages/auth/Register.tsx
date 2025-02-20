@@ -66,10 +66,10 @@ const Register: React.FC = () => {
     <AuthLayout>
       <h2 className='text-3xl font-semibold text-gray-900 mb-4'>Get Started</h2>
       <p className='text-gray-500 mb-6'>
-        Welcome to Fillianta - Let's create your account.
+        Let's create your account.
       </p>
       {error && <p className='text-red-600 mb-4'>{error}</p>}
-      <form onSubmit={handleSubmit} className='w-8/12'>
+      <form onSubmit={handleSubmit} className='w-10/12 md:w-8/12'>
         <div className='mb-4'>
           <label className='block text-gray-700 font-medium mb-2'>
             Username

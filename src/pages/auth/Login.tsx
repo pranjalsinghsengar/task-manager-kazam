@@ -56,7 +56,7 @@ const Login: React.FC = () => {
       </h2>
       <p className='text-gray-500 mb-6'>Log in to your account.</p>
       {error && <p className='text-red-500 mb-4'>{error}</p>}
-      <form onSubmit={handleSubmit} className='w-8/12'>
+      <form onSubmit={handleSubmit} className='w-10/12 md:w-8/12'>
         <div className='mb-4'>
           <label className='block text-gray-700 font-medium mb-2'>Email</label>
           <input
