@@ -17,6 +17,7 @@ import {
   Draggable,
   DropResult,
 } from "@hello-pangea/dnd";
+import Loader from "../../components/loader";
 
 const TaskList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,6 +34,7 @@ const TaskList: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [secondaryLoading, setSecondaryLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setLoading(true);
@@ -56,8 +58,10 @@ const TaskList: React.FC = () => {
 
   const CreateHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSecondaryLoading(true);
     dispatch(createTask(newTask)).then(() => {
       dispatch(fetchTasks());
+      setSecondaryLoading(false);
       setIsModalOpen(false);
     });
     setNewTask({ title: "", description: "", status: "pending" });
@@ -65,12 +69,15 @@ const TaskList: React.FC = () => {
 
   const UpdateHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSecondaryLoading(true);
+
     if (editTask) {
       dispatch(updateTask(editTask))
         .then(() => dispatch(fetchTasks()))
         .finally(() => {
           setEditTask(null);
           setIsEditModalOpen(false);
+          setSecondaryLoading(false);
         });
     }
   };
@@ -305,10 +312,22 @@ const TaskList: React.FC = () => {
                 </div>
                 <button
                   type='submit'
-                  className='w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-md'
+                  className='w-full bg-gradient-to-r relative from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-md'
                   aria-label='submit'
                 >
-                  Create Task
+                  <Loader
+                    color='#fff'
+                    className={`w-16 ${
+                      secondaryLoading ? "opacity-100" : "opacity-0"
+                    } `}
+                  />
+                  <div
+                    className={`${
+                      secondaryLoading ? "opacity-0" : "opacity-100"
+                    }`}
+                  >
+                    Create Task
+                  </div>
                 </button>
               </form>
             </div>
@@ -390,9 +409,21 @@ const TaskList: React.FC = () => {
                 <div className='flex gap-4'>
                   <button
                     type='submit'
-                    className='flex-1 bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-all duration-200 shadow-md'
+                    className='flex-1 relative bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-all duration-200 shadow-md'
                   >
-                    Update Task
+                    <Loader
+                      color='#fff'
+                      className={`w-10 ${
+                        secondaryLoading ? "opacity-100" : "opacity-0"
+                      } `}
+                    />
+                    <div
+                      className={`${
+                        secondaryLoading ? "opacity-0" : "opacity-100"
+                      }`}
+                    >
+                      Update Task
+                    </div>
                   </button>
                   <button
                     type='button'
@@ -441,7 +472,7 @@ const TaskList: React.FC = () => {
                                 className='drag-handle flex justify-center -mt-2.5'
                                 {...provided.dragHandleProps}
                               >
-                                <div className="h-1.5 bg-gray-300/40 rounded-full w-20 max-w-2xs"></div>
+                                <div className='h-1.5 bg-gray-300/40 rounded-full w-20 max-w-2xs'></div>
                                 {/* <svg
                                   xmlns='http://www.w3.org/2000/svg'
                                   className='h-6 w-6 text-gray-400'
