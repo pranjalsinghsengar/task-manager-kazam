@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import AuthLayout from "../../layouts/AuthLayout";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config/config";
 
 interface FormData {
   username: string;
@@ -36,7 +37,7 @@ const Register: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/register",
+        `${API_URL}/user/register`,
         form,
         {
           headers: {

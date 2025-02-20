@@ -411,7 +411,7 @@ const TaskList: React.FC = () => {
         )}
 
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6 draggable-container'>
             {Object.entries(statusColumns).map(([status, tasks]) => (
               <Droppable droppableId={status} key={status}>
                 {(provided) => (
@@ -437,6 +437,25 @@ const TaskList: React.FC = () => {
                               {...provided.dragHandleProps}
                               className='bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100 transform hover:-translate-y-1'
                             >
+                              <div
+                                className='drag-handle'
+                                {...provided.dragHandleProps}
+                              >
+                                <svg
+                                  xmlns='http://www.w3.org/2000/svg'
+                                  className='h-6 w-6 text-gray-400'
+                                  fill='none'
+                                  viewBox='0 0 24 24'
+                                  stroke='currentColor'
+                                >
+                                  <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    strokeWidth={2}
+                                    d='M4 8h16M4 16h16'
+                                  />
+                                </svg>
+                              </div>
                               <h4 className='font-semibold text-gray-800'>
                                 {task.title}
                               </h4>
@@ -457,7 +476,7 @@ const TaskList: React.FC = () => {
                                 <button
                                   onClick={() => DeleteHandler(task)}
                                   aria-label='delete'
-                                  className='text-red-500 text-xl cursor-pointer hover:text-red-800  font-medium transition-colors duration-200'
+                                  className='text-red-500 text-xl cursor-pointer hover:text-red-800 font-medium transition-colors duration-200'
                                 >
                                   <MdDelete />
                                 </button>

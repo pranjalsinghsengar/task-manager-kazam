@@ -15,6 +15,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html, body {
+  touch-action: manipulation; /* Prevents pinch-zoom or scrolling interference */
+  overscroll-behavior: none; /* Prevents pull-to-refresh or overscroll */
+}
+
+.draggable-container {
+  touch-action: none; /* Ensures dragging works within the container */
+}
+
 a {
   font-weight: 500;
   color: #646cff;
