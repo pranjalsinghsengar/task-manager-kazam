@@ -7,7 +7,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const TaskList = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const taskList = useSelector((state: RootState) => state.tasks.tasks);
+  const taskList = useSelector((state: RootState) => state.tasks.tasks || []);
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -54,7 +54,7 @@ const TaskList = () => {
   };
 
   const DeleteHandler = async (task: Task) => {
-    await dispatch(deleteTask(task));
+    await dispatch(deleteTask(task._id));
     dispatch(fetchTasks());
   };
 
@@ -69,7 +69,7 @@ const TaskList = () => {
     const { source, destination } = result;
     if (!destination) return;
 
-    const task = taskList.find((t: Task) => t._id === result.draggableId);
+    const task = taskList.find((t) => t._id === result.draggableId);
     if (!task) return;
 
     const newStatus = destination.droppableId as "pending" | "in-progress" | "completed";
@@ -80,15 +80,15 @@ const TaskList = () => {
   };
 
   const statusColumns = {
-    pending: taskList.filter((task: Task) => task.status === "pending"),
-    "in-progress": taskList.filter((task: Task) => task.status === "in-progress"),
-    completed: taskList.filter((task: Task) => task.status === "completed"),
+    pending: taskList.filter(task => task.status === "pending"),
+    "in-progress": taskList.filter(task => task.status === "in-progress"),
+    completed: taskList.filter(task => task.status === "completed"),
   };
 
   return (
     <div className="max-w-7xl mx-auto p-6 relative">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold text-gray-800 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text ">
           Task Manager
         </h1>
         <button

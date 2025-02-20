@@ -5,4 +5,6 @@ export interface Task {
     status: 'pending' | 'in-progress' | 'completed';
     author: string;
     __v: number;
-} 
+}
+
+export type NewTask = Omit<Task, '_id' | 'author' | '__v'>; 
