@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import TaskList from "./pages/task/TaskList";
@@ -19,18 +19,20 @@ const App = () => {
     }
   }, [token]);
   return (
-    <Router>
+    <Routes>
       {!authorized ? (
-        <Routes>
+        <>
           <Route path='/' element={<Login />} />
           <Route path='/register' element={<Register />} />
-        </Routes>
+          <Route path='*' element={<Navigate to='/' />} />
+        </>
       ) : (
-        <Routes>
+        <>
+          <Route path='*' element={<Navigate to='/' />} />
           <Route path='/' element={<TaskList />} />
-        </Routes>
+        </>
       )}
-    </Router>
+    </Routes>
   );
 };
 
