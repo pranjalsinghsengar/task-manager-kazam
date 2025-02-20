@@ -64,7 +64,7 @@ const Login: React.FC = () => {
             name='email'
             value={form.email}
             onChange={InputHandler}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500'
+            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500'
             placeholder='hi@fillianta.com'
             required
           />
@@ -78,17 +78,17 @@ const Login: React.FC = () => {
             name='password'
             value={form.password}
             onChange={InputHandler}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500'
+            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500'
             placeholder='Enter your password'
             required
           />
-          <a href='#' className='text-green-600 text-sm float-right mt-1'>
+          {/* <a href='#' className='text-purple-600 text-sm float-right mt-1'>
             Forgot?
-          </a>
+          </a> */}
         </div>
         <button
           type='submit'
-          className='w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition'
+          className='w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-800 transition'
           disabled={loading}
         >
           {loading ? "Logging in..." : "Log in"}
@@ -96,7 +96,7 @@ const Login: React.FC = () => {
         <p className='text-gray-600 text-sm  mt-4 flex items-center justify-center gap-2 text-center'>
           Don't have an account?{" "}
           <p
-            className='text-green-600 cursor-pointer font-medium'
+            className='text-purple-600 cursor-pointer font-medium'
             onClick={() => navigate("/register")}
           >Sign up</p>
           

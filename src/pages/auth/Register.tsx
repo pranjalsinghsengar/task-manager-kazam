@@ -79,7 +79,7 @@ const Register: React.FC = () => {
             name='username'
             value={form.username}
             onChange={InputHandler}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500'
+            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500'
             placeholder='Enter your username'
             required
           />
@@ -91,7 +91,7 @@ const Register: React.FC = () => {
             name='email'
             value={form.email}
             onChange={InputHandler}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500'
+            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500'
             placeholder='hi@fillianta.com'
             required
           />
@@ -105,21 +105,21 @@ const Register: React.FC = () => {
             name='password'
             value={form.password}
             onChange={InputHandler}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500'
+            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500'
             placeholder='Enter your password'
             required
           />
         </div>
         <button
           type='submit'
-          className='w-full bg-green-700 cursor-pointer text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition'
+          className='w-full bg-gradient-to-r from-indigo-600 to-purple-600 cursor-pointer text-white py-2 rounded-lg font-semibold hover:bg-purple-800 transition'
           disabled={loading}
         >
           {loading ? "Signing up..." : "Sign Up"}
         </button>
         <p className='text-gray-600 text-sm text-center mt-4 flex items-center justify-center gap-2'>
           Already have an account?{" "}
-          <p className=" text-green-600 cursor-pointer font-medium" onClick={()=> navigate("/")}>
+          <p className=" text-purple-600 cursor-pointer font-medium" onClick={()=> navigate("/")}>
             Log in
           </p>
         </p>
