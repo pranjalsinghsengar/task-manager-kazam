@@ -1,16 +1,23 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
-import { Task } from '../types';
+import { Task } from '../types/task'; // Updated import path to match previous example
 import { API_URL } from '../config/config';
+
+// Define more specific error type
+interface TaskError {
+  message: string;
+  status?: number;
+}
 
 interface TaskState {
   tasks: Task[];
   loading: boolean;
-  error: unknown;
+  error: TaskError | null;
 }
+
 interface TaskPayload {
   taskId: string;
-  status: string;
+  status: "pending" | "in-progress" | "completed";
 }
 
 const initialState: TaskState = {
@@ -21,52 +28,56 @@ const initialState: TaskState = {
 
 const token = localStorage.getItem("tsk-token");
 
-const createConfig = (method: string, endpoint: string) => ({
+const createConfig = (method: 'get' | 'post', endpoint: string) => ({
   method,
   url: `${API_URL}/task/${endpoint}`,
   headers: {
-    'Authorization': `Bearer ${token}`
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
   }
 });
 
-export const fetchTasks = createAsyncThunk(
+// Thunk actions with proper typing
+export const fetchTasks = createAsyncThunk<Task[], void, { rejectValue: TaskError }>(
   'tasks/fetchTasks',
-  async (_, thunkAPI) => {
+  async (_, { rejectWithValue }) => {
     try {
       const config = createConfig('get', 'list');
       const response = await axios.request(config);
-      return response.data;
+      return response.data.tasks || response.data;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(error.response?.data);
-      }
-      throw error;
+      const axiosError = error as AxiosError<TaskError>;
+      return rejectWithValue({
+        message: axiosError.response?.data?.message || 'Failed to fetch tasks',
+        status: axiosError.response?.status
+      });
     }
   }
 );
 
-export const createTask = createAsyncThunk(
+export const createTask = createAsyncThunk<Task, Omit<Task, '_id'>, { rejectValue: TaskError }>(
   'tasks/createTask',
-  async (task: Omit<Task, '_id'>, thunkAPI) => {
+  async (task, { rejectWithValue }) => {
     try {
       const config = {
         ...createConfig('post', 'create'),
         data: task,
       };
       const response = await axios.request(config);
-      return response.data.task || response.data; // Handle both response formats
+      return response.data.task || response.data;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(error.response?.data);
-      }
-      throw error;
+      const axiosError = error as AxiosError<TaskError>;
+      return rejectWithValue({
+        message: axiosError.response?.data?.message || 'Failed to create task',
+        status: axiosError.response?.status
+      });
     }
   }
 );
 
-export const updateTask = createAsyncThunk(
+export const updateTask = createAsyncThunk<Task, Task, { rejectValue: TaskError }>(
   'tasks/updateTask',
-  async (task: Task, thunkAPI) => {
+  async (task, { rejectWithValue }) => {
     try {
       const config = {
         ...createConfig('post', 'update'),
@@ -80,43 +91,42 @@ export const updateTask = createAsyncThunk(
       const response = await axios.request(config);
       return response.data.task || response.data;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(error.response?.data);
-      }
-      throw error;
+      const axiosError = error as AxiosError<TaskError>;
+      return rejectWithValue({
+        message: axiosError.response?.data?.message || 'Failed to update task',
+        status: axiosError.response?.status
+      });
     }
   }
 );
 
-export const deleteTask = createAsyncThunk(
+export const deleteTask = createAsyncThunk<{ taskId: string }, string, { rejectValue: TaskError }>(
   'tasks/deleteTask',
-  async (taskId: string, thunkAPI) => {
+  async (taskId, { rejectWithValue }) => {
     try {
       const config = {
         ...createConfig('post', 'delete'),
         data: { taskId },
       };
       const response = await axios.request(config);
-      // Return the taskId directly for easier state update
-      return { taskId, success: response.data.success };
+      return response.data.task || response.data;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(error.response?.data);
-      }
-      throw error;
+      const axiosError = error as AxiosError<TaskError>;
+      return rejectWithValue({
+        message: axiosError.response?.data?.message || 'Failed to delete task',
+        status: axiosError.response?.status
+      });
     }
   }
 );
-export const statusTask = createAsyncThunk(
+
+export const statusTask = createAsyncThunk<Task, TaskPayload, { rejectValue: TaskError }>(
   'tasks/statusUpdate',
-  async ({ taskId, status }: TaskPayload, thunkAPI) => {
+  async ({ taskId, status }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${API_URL}/task/update/status`,
-        {
-          taskId,
-          status,
-        },
+        { taskId, status },
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -124,15 +134,17 @@ export const statusTask = createAsyncThunk(
           },
         }
       );
-      return response.data;
+      return response.data.task || response.data;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(error.response?.data);
-      }
-      throw error;
+      const axiosError = error as AxiosError<TaskError>;
+      return rejectWithValue({
+        message: axiosError.response?.data?.message || 'Failed to update status',
+        status: axiosError.response?.status
+      });
     }
   }
 );
+
 const taskSlice = createSlice({
   name: 'tasks',
   initialState,
@@ -144,14 +156,14 @@ const taskSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchTasks.fulfilled, (state, action) => {
+      .addCase(fetchTasks.fulfilled, (state, action: PayloadAction<Task[]>) => {
         state.loading = false;
-        state.tasks = action.payload.tasks || action.payload; // Handle both response formats
+        state.tasks = action.payload;
         state.error = null;
       })
       .addCase(fetchTasks.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'An error occurred';
+        state.error = action.payload || { message: 'An error occurred' };
       });
 
     // Create task
@@ -160,18 +172,17 @@ const taskSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(createTask.fulfilled, (state, action) => {
+      .addCase(createTask.fulfilled, (state, action: PayloadAction<Task>) => {
         state.loading = false;
-        // Only add the task if it's not already in the state
         const existingTask = state.tasks.find(task => task._id === action.payload._id);
         if (!existingTask) {
-          state.tasks = [...state.tasks, action.payload];
+          state.tasks.push(action.payload);
         }
         state.error = null;
       })
       .addCase(createTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to create task';
+        state.error = action.payload || { message: 'Failed to create task' };
       });
 
     // Update task
@@ -180,19 +191,16 @@ const taskSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateTask.fulfilled, (state, action) => {
+      .addCase(updateTask.fulfilled, (state, action: PayloadAction<Task>) => {
         state.loading = false;
-        const index = state.tasks.findIndex(task => task._id === action.payload._id);
-        if (index !== -1) {
-          state.tasks = state.tasks.map(task =>
-            task._id === action.payload._id ? action.payload : task
-          );
-        }
+        state.tasks = state.tasks.map(task =>
+          task._id === action.payload._id ? action.payload : task
+        );
         state.error = null;
       })
       .addCase(updateTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to update task';
+        state.error = action.payload || { message: 'Failed to update task' };
       });
 
     // Delete task
@@ -201,37 +209,32 @@ const taskSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteTask.fulfilled, (state, action) => {
+      .addCase(deleteTask.fulfilled, (state, action: PayloadAction<{ taskId: string }>) => {
         state.loading = false;
-        // Remove the task from state using the returned taskId
         state.tasks = state.tasks.filter(task => task._id !== action.payload.taskId);
         state.error = null;
       })
       .addCase(deleteTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to delete task';
+        state.error = action.payload || { message: 'Failed to delete task' };
       });
 
     // Update status
-
     builder
       .addCase(statusTask.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(statusTask.fulfilled, (state, action) => {
+      .addCase(statusTask.fulfilled, (state, action: PayloadAction<Task>) => {
         state.loading = false;
-        // ✅ Update the task status in the state
-        const index = state.tasks.findIndex(
-          (task) => task._id === action.payload.taskId
+        state.tasks = state.tasks.map(task =>
+          task._id === action.payload._id ? action.payload : task
         );
-        if (index !== -1) {
-          state.tasks[index].status = action.payload.status;
-        }
+        state.error = null;
       })
       .addCase(statusTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload || { message: 'Failed to update status' };
       });
   },
 });
