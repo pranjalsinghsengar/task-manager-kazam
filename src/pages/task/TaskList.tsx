@@ -438,10 +438,11 @@ const TaskList: React.FC = () => {
                               className='bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100 transform hover:-translate-y-1'
                             >
                               <div
-                                className='drag-handle'
+                                className='drag-handle flex justify-center -mt-2.5'
                                 {...provided.dragHandleProps}
                               >
-                                <svg
+                                <div className="h-1.5 bg-gray-300/40 rounded-full w-20 max-w-2xs"></div>
+                                {/* <svg
                                   xmlns='http://www.w3.org/2000/svg'
                                   className='h-6 w-6 text-gray-400'
                                   fill='none'
@@ -454,7 +455,7 @@ const TaskList: React.FC = () => {
                                     strokeWidth={2}
                                     d='M4 8h16M4 16h16'
                                   />
-                                </svg>
+                                </svg> */}
                               </div>
                               <h4 className='font-semibold text-gray-800'>
                                 {task.title}
