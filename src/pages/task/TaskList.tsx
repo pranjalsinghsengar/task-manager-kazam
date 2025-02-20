@@ -1,4 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
+import { MdDelete } from "react-icons/md";
+import { RiEditFill } from "react-icons/ri";
 import { RootState, AppDispatch } from "../../store/store";
 import React, { useEffect, useState, FormEvent } from "react";
 import {
@@ -112,8 +114,10 @@ const TaskList: React.FC = () => {
     <>
       {loading && (
         <div className='z-50 w-full h-full backdrop-blur-[3px] bg-black/10 flex justify-center items-center absolute top-0 left-0'>
-          <div className="flex justify-center items-center flex-col">
-            <div className="text-[#8525f9] text-2xl font-bold">Loading data from database</div>
+          <div className='flex justify-center items-center flex-col'>
+            <div className='text-[#8525f9] text-2xl font-bold'>
+              Loading data from database
+            </div>
             <div className='w-20'>
               <svg viewBox='0 0 200 200'>
                 <circle
@@ -175,14 +179,14 @@ const TaskList: React.FC = () => {
           </div>
         </div>
       )}
-      <div className='max-w-7xl mx-auto p-6 relative'>
-        <div className='flex justify-between items-center mb-6'>
-          <h1 className='text-3xl font-bold text-gray-800 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text '>
+      <div className='p-5 px-5 md:px-10'>
+        <div className='flex justify-between items-center'>
+          <h1 className=' text-lg md:text-3xl font-bold text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text'>
             Task Manager
           </h1>
           <button
             onClick={SignoutHandler}
-            className='bg-red-100 text-red-500 font-semibold py-2 px-4 rounded-lg cursor-pointer transition-all duration-200  flex items-center gap-2'
+            className='bg-red-100 text-xs md:text-base text-red-500 font-semibold md:py-2 md:px-4 py-1 px-2 rounded-lg cursor-pointer transition-all duration-200  flex items-center gap-2'
             aria-label='Logout'
           >
             <svg
@@ -224,7 +228,9 @@ const TaskList: React.FC = () => {
             />
           </svg>
         </button>
+      </div>
 
+      <div className='max-w-7xl mx-auto p-6 relative'>
         {isModalOpen && (
           <div className='fixed inset-0 backdrop-blur-xs bg-black/5 bg-opacity-50 flex items-center justify-center z-50'>
             <div className='bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 scale-100'>
@@ -443,15 +449,17 @@ const TaskList: React.FC = () => {
                                     setEditTask(task);
                                     setIsEditModalOpen(true);
                                   }}
-                                  className='text-indigo-600 hover:text-indigo-800 text-sm font-medium transition-colors duration-200'
+                                  aria-label='edit'
+                                  className='text-indigo-600 hover:text-indigo-800 text-xl font-medium transition-colors duration-200'
                                 >
-                                  Edit
+                                  <RiEditFill />
                                 </button>
                                 <button
                                   onClick={() => DeleteHandler(task)}
-                                  className='text-red-600 hover:text-red-800 text-sm font-medium transition-colors duration-200'
+                                  aria-label='delete'
+                                  className='text-red-500 text-xl cursor-pointer hover:text-red-800  font-medium transition-colors duration-200'
                                 >
-                                  Delete
+                                  <MdDelete />
                                 </button>
                               </div>
                             </div>
