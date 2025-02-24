@@ -14,6 +14,7 @@ import EditTaskModal from "../../components/EditTaskModal";
 import TaskColumn from "../../components/TaskColumn";
 import { AppDispatch, RootState } from "../../store/store";
 import { Task } from "../../types/task";
+import Loader from "../../components/loader";
 
 const TaskList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -104,15 +105,16 @@ const TaskList: React.FC = () => {
 
   return (
     <>
-      {loading && (
+      {!loading && (
         <div className="z-50 w-full h-full backdrop-blur-[3px] bg-black/10 flex justify-center items-center absolute top-0 left-0">
           <div className="flex justify-center items-center flex-col">
             <div className="text-[#8525f9] text-2xl font-bold">Loading data from database</div>
-            <div className="w-20">
-              <svg viewBox="0 0 200 200">
-                {/* Loading animation SVG */}
-              </svg>
-            </div>
+            
+             <div className="relative mt-5">
+
+               <Loader color="#8624f6" className="w-20 " />
+             </div>
+           
           </div>
         </div>
       )}
